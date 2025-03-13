@@ -5,6 +5,15 @@ from typing import List, Tuple
 
 
 def make_pts(N: int) -> List[Tuple[float, float]]:
+    '''
+    Generate N random points in the unit square.
+    
+    Args:
+        N: The number of points to generate.
+    
+    Returns:
+        A list of N points, each represented as a tuple of two floats.
+    '''
     X = []
     for i in range(N):
         x_1 = random.random()
@@ -15,12 +24,29 @@ def make_pts(N: int) -> List[Tuple[float, float]]:
 
 @dataclass
 class Graph:
+    '''
+    A simple graph dataset.
+    
+    Attributes:
+        N: The number of points in the dataset.
+        X: The points in the dataset.
+        y: The labels for each point in the dataset.
+    '''
     N: int
     X: List[Tuple[float, float]]
     y: List[int]
 
 
 def simple(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a single diagonal line.
+    
+    Args:
+        N: The number of points to generate.
+    
+    Returns:
+        A simple dataset with a diagonal
+    '''
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -30,6 +56,15 @@ def simple(N: int) -> Graph:
 
 
 def diag(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a single diagonal line.
+    
+    Args:
+        N: The number of points to generate.
+    
+    Returns:
+        A simple dataset with a diagonal
+    '''
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -39,6 +74,15 @@ def diag(N: int) -> Graph:
 
 
 def split(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a single diagonal line.
+    
+    Args:
+        N: The number of points to generate.
+        
+    Returns:
+        A simple dataset with a split.
+    '''
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -48,6 +92,15 @@ def split(N: int) -> Graph:
 
 
 def xor(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a xor split.
+    
+    Args:
+        N: The number of points to generate.
+        
+    Returns:
+        A simple dataset with a split.
+    '''
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -57,6 +110,15 @@ def xor(N: int) -> Graph:
 
 
 def circle(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a sngle diagonal line.
+    
+    Args:
+        N: The number of points to generate.
+        
+    Returns:
+        A simple dataset with a split.
+    '''
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -67,6 +129,15 @@ def circle(N: int) -> Graph:
 
 
 def spiral(N: int) -> Graph:
+    '''
+    Generate a simple dataset with a spiral.
+    
+    Args:
+        N: The number of points to generate.
+    
+    Returns:
+        A simple dataset with a spiral
+    '''
     def x(t: float) -> float:
         return t * math.cos(t) / 20.0
 
