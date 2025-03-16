@@ -176,8 +176,7 @@ class Scalar:
         # TODO: Implement for Task 1.3.
         grads = h.last_fn.backward(h.ctx, d_output)
         assert len(grads) == len(h.inputs)
-        return zip(h.inputs, grads)   
-        
+        return list(filter(lambda x : not x[0].is_constant(), list(zip(h.inputs, grads))))
 
     def backward(self, d_output: Optional[float] = None) -> None:
         """
