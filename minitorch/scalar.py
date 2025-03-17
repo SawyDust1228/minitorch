@@ -175,6 +175,8 @@ class Scalar:
 
         # TODO: Implement for Task 1.3.
         grads = h.last_fn.backward(h.ctx, d_output)
+        if not isinstance(grads, tuple):
+            grads = (grads,)
         assert len(grads) == len(h.inputs)
         return list(filter(lambda x : not x[0].is_constant(), list(zip(h.inputs, grads))))
 
