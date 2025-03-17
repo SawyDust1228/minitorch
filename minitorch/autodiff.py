@@ -28,7 +28,7 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
 variable_count = 1
 
 
-class Variable(Protocol):
+class Variable(Protocol): #协议
     def accumulate_derivative(self, x: Any) -> None:
         pass
 
@@ -61,8 +61,49 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
-
+    
+    result = []
+    visited = set()
+    def visit(variable : Variable):
+        for p in variable.parents:
+            if not p.is_constant():
+                visit(p)
+        if variable.unique_id not in visited:
+            visited.add(variable.unique_id)
+            result.append(variable)
+    visit(variable);result.reverse()
+    assert variable.unique_id == result[0].unique_id
+    return result
+    
+    # perminentMarked = []
+    # temporaryMarked = []
+    # result = []
+    
+    # def visit(v: Variable):
+    #     if v.is_constant():
+    #         return
+        
+    #     if v.unique_id in perminentMarked:
+    #         return
+        
+    #     if v.unique_id in temporaryMarked:
+    #         raise ValueError("Cycle detected")
+      
+    #     temporaryMarked.append(v.unique_id)
+    #     if not v.is_leaf():
+    #         for p in v.parents:
+    #             visit(p)
+    #     perminentMarked.append(v.unique_id)
+    #     temporaryMarked.remove(v.unique_id)
+    #     result.append(v)
+        
+    # visit(variable)
+    
+    # result.reverse()
+    # assert result[0].unique_id == variable.unique_id
+    
+    # return result
+    
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
     """
@@ -76,7 +117,18 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    visited = dict();visited[variable.unique_id] = deriv
+    for v in topological_sort(variable):
+        if v.is_leaf():
+            v.accumulate_derivative(visited[v.unique_id])
+        else:
+            for p, d in v.chain_rule(visited[v.unique_id]):
+                if p.is_constant():
+                    continue
+                if p.unique_id not in visited.keys():
+                    visited[p.unique_id] = 0
+                visited[p.unique_id] += d
+    return
 
 
 @dataclass

@@ -111,7 +111,7 @@ class Mul(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
         (a, b) = ctx.saved_values
-        return operators.mul(a, d_output), operators.mul(b, d_output)
+        return operators.mul(b, d_output), operators.mul(a, d_output)
 
 
 class Inv(ScalarFunction):
@@ -183,14 +183,15 @@ class Exp(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
         # TODO: Implement for Task 1.2.
-        ctx.save_for_backward(a)
-        return operators.exp(a)
+        result = operators.exp(a)
+        ctx.save_for_backward(result)
+        return result
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
         # TODO: Implement for Task 1.4.
-        (a,) = ctx.saved_values
-        return d_output * operators.exp(a)
+        (exp_a,) = ctx.saved_values
+        return d_output * exp_a
 
 
 class LT(ScalarFunction):
@@ -199,15 +200,12 @@ class LT(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         # TODO: Implement for Task 1.2.
-        ctx.save_for_backward(a, b)
         return operators.lt(a, b)
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
-        (a, b) = ctx.saved_values
-        return d_output * operators.lt(a, b), d_output * operators.lt(b, a)
-
+        return 0, 0
 
 class EQ(ScalarFunction):
     "Equal function $f(x) =$ 1.0 if x is equal to y else 0.0"
@@ -215,11 +213,9 @@ class EQ(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         # TODO: Implement for Task 1.2.
-        ctx.save_for_backward(a, b)
         return operators.eq(a, b)
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
-        (a, b) = ctx.saved_values
-        return d_output * operators.eq(a, b), d_output * operators.eq(b, a)
+        return 0, 0
