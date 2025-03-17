@@ -19,7 +19,7 @@ class IndexingError(RuntimeError):
     pass
 
 
-Storage: TypeAlias = npt.NDArray[np.float64]
+Storage: TypeAlias = npt.NDArray[np.float64] # 1D array of floats
 OutIndex: TypeAlias = npt.NDArray[np.int32]
 Index: TypeAlias = npt.NDArray[np.int32]
 Shape: TypeAlias = npt.NDArray[np.int32]
@@ -44,7 +44,7 @@ def index_to_position(index: Index, strides: Strides) -> int:
     """
 
     # TODO: Implement for Task 2.1.
-    raise NotImplementedError('Need to implement for Task 2.1')
+    return index.dot(strides)
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -61,7 +61,11 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
 
     """
     # TODO: Implement for Task 2.1.
-    raise NotImplementedError('Need to implement for Task 2.1')
+    for d in range(len(shape) - 1, -1, -1):
+        out_index[d] = ordinal % shape[d]
+        ordinal = ordinal // shape[d]
+    
+    
 
 
 def broadcast_index(
@@ -228,7 +232,9 @@ class TensorData:
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
         # TODO: Implement for Task 2.1.
-        raise NotImplementedError('Need to implement for Task 2.1')
+        shape = tuple(self.shape[i] for i in order)
+        strides = tuple(self.strides[i] for i in order)
+        return TensorData(self._storage, shape, strides)
 
     def to_string(self) -> str:
         s = ""
