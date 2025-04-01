@@ -44,7 +44,11 @@ def index_to_position(index: Index, strides: Strides) -> int:
     """
 
     # TODO: Implement for Task 2.1.
-    return index.dot(strides)
+    # return index.dot(strides) # 不能这样写，numba会报错
+    pos: int = 0
+    for ind, stride in zip(index, strides):
+        pos += ind * stride
+    return pos
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -61,6 +65,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
 
     """
     # TODO: Implement for Task 2.1.
+    ordinal = ordinal + 0
     for d in range(len(shape) - 1, -1, -1):
         out_index[d] = ordinal % shape[d]
         ordinal = ordinal // shape[d]
