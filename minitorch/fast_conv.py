@@ -202,7 +202,7 @@ def _tensor_conv2d(
         weight_strides (Strides): strides for `input` tensor.
         reverse (bool): anchor weight at top-left or bottom-right
     """
-    batch_, out_channels, _, _ = out_shape
+    batch_, out_channels, height_, width_ = out_shape
     batch, in_channels, height, width = input_shape
     out_channels_, in_channels_, kh, kw = weight_shape
 
@@ -219,7 +219,37 @@ def _tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError('Need to implement for Task 4.2')
+    for b in prange(batch):
+        for c in prange(out_channels):
+            for h in prange(height_):
+                for w in prange(width_):
+                    # out[b, c, h, w]
+                    out_ordinal = (
+                        b * out_strides[0]
+                        + c * out_strides[1]
+                        + h * out_strides[2]
+                        + w * out_strides[3]
+                    )
+                    # find what generate this block
+                    for c_ in prange(in_channels):
+                        start_h = max(h - kh + 1, 0) if reverse else min(h, height - 1)
+                        end_h = min(h + 1, height) if reverse else min(h + kh, height)
+                        start_w = max(w - kw + 1, 0) if reverse else min(w, width - 1)
+                        end_w = min(w + 1, width) if reverse else min(w + kw, width)
+                        for h_ in prange(start_h, end_h):
+                            for w_ in prange(start_w, end_w):
+                                # input[b, c_, h_ , w_]
+                                in_ordinal = b * s10 + c_ * s11 + h_ * s12 + w_ * s13
+                                # weight[c, c_, h_ - start_h, w_ - start_w]
+                                weight_ordinal = (
+                                    c * s20
+                                    + c_ * s21
+                                    + (h_ - start_h) * s22
+                                    + (w_ - start_w) * s23
+                                )
+                                out[out_ordinal] += (
+                                    input[in_ordinal] * weight[weight_ordinal]
+                                )
 
 
 tensor_conv2d = njit(parallel=True, fastmath=True)(_tensor_conv2d)
