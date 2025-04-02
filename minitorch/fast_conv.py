@@ -81,7 +81,19 @@ def _tensor_conv1d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError('Need to implement for Task 4.1')
+    for b in prange(batch):
+        for c in prange(out_channels):
+            for i in prange(out_width):
+                out_ordinal = (
+                    b * out_strides[0] + c * out_strides[1] + i * out_strides[2]
+                )
+                for c_ in prange(in_channels):
+                    start = max(i - kw + 1, 0) if reverse else min(i, width - 1)
+                    end = min(i + 1, width) if reverse else min(i + kw, width)
+                    for i_ in prange(start, end):
+                        in_ordinal = b * s1[0] + c_ * s1[1] + i_ * s1[2]
+                        weight_ordinal = c * s2[0] + c_ * s2[1] + (i_ - start) * s2[2]
+                        out[out_ordinal] += input[in_ordinal] * weight[weight_ordinal]
 
 
 tensor_conv1d = njit(parallel=True)(_tensor_conv1d)
